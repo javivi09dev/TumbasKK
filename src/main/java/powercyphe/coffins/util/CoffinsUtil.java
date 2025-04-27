@@ -117,8 +117,30 @@ public class CoffinsUtil {
             Mod.LOGGER.info("Se encontró ubicación para el ataúd: " + entryList.get(0).getKey());
             return entryList.get(0).getKey();
         } else {
-            Mod.LOGGER.info("No se encontró ubicación para el ataúd");
-            return null;
+            Mod.LOGGER.info("No se encontró ubicación para el ataúd. Creando plataforma por defecto.");
+            // Crear una plataforma por defecto si no se encuentra ubicación
+            BlockPos defaultPos = playerPos.down();
+            
+            // Si el jugador está en el vacío, crear una plataforma en su posición actual
+            if (defaultPos.getY() < 1) defaultPos = playerPos;
+            
+            // Crear una plataforma de obsidiana si el bloque en esa posición no es adecuado
+            if (!world.getBlockState(defaultPos).isAir() && !world.getBlockState(defaultPos).isReplaceable()) {
+                // Si el bloque no es reemplazable, usa la posición del jugador
+                defaultPos = playerPos;
+            }
+            
+            // Asegúrate de que hay espacio para el ataúd
+            if (!world.getBlockState(defaultPos.up()).isAir()) {
+                // Si no hay espacio arriba, reemplaza el bloque
+                world.setBlockState(defaultPos.up(), Blocks.AIR.getDefaultState());
+            }
+            
+            // Opcionalmente, crear una plataforma de obsidiana debajo
+            world.setBlockState(defaultPos.down(), Blocks.OBSIDIAN.getDefaultState());
+            
+            Mod.LOGGER.info("Plataforma creada en: " + defaultPos);
+            return defaultPos;
         }
     }
 }

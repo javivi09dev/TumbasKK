@@ -46,6 +46,12 @@ sourceSets {
 		}
 	}
 }
+
+// Configuración para manejar archivos duplicados
+tasks.withType(ProcessResources) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 dependencies {
 	// Versions can be changed in the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"

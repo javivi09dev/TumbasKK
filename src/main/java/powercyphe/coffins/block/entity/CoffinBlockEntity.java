@@ -100,8 +100,11 @@ public class CoffinBlockEntity extends BlockEntity implements NamedScreenHandler
                 double y = pos.getY() + 0.5;
                 double z = pos.getZ() + 0.5;
                 if (state.getBlock() instanceof CoffinBlock) {
+                    player.getWorld().playSound(null, pos, ModSounds.COFFIN_LOCKED, SoundCategory.BLOCKS, 0.8f, 1.5f);
+                    ((ServerWorld) player.getWorld()).spawnParticles(ParticleTypes.POOF, x, y, z, 15, 0.3, 0.3, 0.3, 0.05);
+                    ((ServerWorld) player.getWorld()).spawnParticles(ParticleTypes.SMOKE, x, y, z, 10, 0.2, 0.2, 0.2, 0.05);
+                    ((ServerWorld) player.getWorld()).spawnParticles(ParticleTypes.SOUL, x, y, z, 5, 0.2, 0.2, 0.2, 0.02);
                     player.getWorld().breakBlock(pos, true);
-                    ((ServerWorld) player.getWorld()).spawnParticles(ParticleTypes.POOF, x, y, z, 7, 0.0, 0.0, 0.0, 0.0);
                 }
             }
         }
