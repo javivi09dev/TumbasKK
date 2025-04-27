@@ -58,10 +58,10 @@ public class CoffinBlockEntity extends BlockEntity implements NamedScreenHandler
     public Text getDisplayName() {
         String translation = Text.translatable("name.coffins.coffin").getString();
         if (!this.getOwnerName().isEmpty()) {
-            return Text.literal("§f" + this.getOwnerName() + "'s " + translation);
+            return Text.literal("§f" +translation+ " de "+this.getOwnerName() );
         } else {
             if (!this.getOwner().isEmpty()) {
-                return Text.literal("§f" + this.getOwner() + "'s" + translation);
+                return Text.literal("§f" +translation+ " de "+this.getOwner());
             }
         }
         return Text.literal("§f" + translation);

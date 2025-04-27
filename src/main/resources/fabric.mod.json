@@ -2,22 +2,23 @@
 	"schemaVersion": 1,
 	"id": "coffins",
 	"version": "${version}",
-	"name": "Coffins",
-	"description": "Adds coffins to the game, that store your items upon death, which can also be used as storage unit.",
+	"name": "Tumbas Kindly Klan",
+	"description": "Añade tumbas a Minecraft.",
 	"authors": [
 		"Powercyphe",
 		"RedVortex",
-		"oPixeel"
+		"oPixeel",
+		"Javivi"
 	],
 	"custom": {
 		"modmenu": {
 			"links": {
-				"modmenu.discord": "https://discord.gg/Dmp2dbyNrs"
+				"modmenu.discord": "https://discord.gg/kindlyklan"
 			}
 		}
 	},
 	"contact": {
-		"homepage": "https://modrinth.com/project/coffins/"
+		"homepage": "https://discord.gg/kindlyklan"
 	},
 	"license": "ARR",
 	"icon": "assets/coffins/icon.png",
