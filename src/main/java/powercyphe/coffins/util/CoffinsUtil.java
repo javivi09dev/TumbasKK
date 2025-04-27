@@ -2,9 +2,10 @@ package powercyphe.coffins.util;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.DimensionTypes;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import powercyphe.coffins.Mod;
 import powercyphe.coffins.block.custom.CoffinBlock;
 import powercyphe.coffins.block.entity.CoffinBlockEntity;
+import net.minecraft.registry.tag.DamageTypeTags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,7 @@ public class CoffinsUtil {
     }
 
     public static @Nullable BlockPos findCoffinLocation(World world, BlockPos playerPos, @Nullable  DamageSource recentDamageSource) {
+        Mod.LOGGER.info("Buscando ubicación para el ataúd. Posición del jugador: " + playerPos);
         TreeMap<BlockPos, Integer> distanceMap = new TreeMap<>();
         RegistryKey<DimensionType> dimension = world.getDimensionKey();
 
@@ -50,7 +53,8 @@ public class CoffinsUtil {
         boolean skipCheck = false;
         boolean voidDeath = false;
         if (recentDamageSource != null) {
-            if (recentDamageSource.isOutOfWorld()) voidDeath = true;
+            Mod.LOGGER.info("Fuente de daño: " + recentDamageSource);
+            if (recentDamageSource.isOf(DamageTypes.OUT_OF_WORLD)) voidDeath = true;
         }
         while (shift) {
             BlockPos shiftPos = playerPos.down(1);
@@ -110,8 +114,10 @@ public class CoffinsUtil {
         List<Map.Entry<BlockPos, Integer>> entryList = new ArrayList<>(distanceMap.entrySet());
         entryList.sort(Map.Entry.comparingByValue());
         if (!entryList.isEmpty()) {
+            Mod.LOGGER.info("Se encontró ubicación para el ataúd: " + entryList.get(0).getKey());
             return entryList.get(0).getKey();
         } else {
+            Mod.LOGGER.info("No se encontró ubicación para el ataúd");
             return null;
         }
     }

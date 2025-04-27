@@ -100,7 +100,7 @@ public class CoffinBlockEntity extends BlockEntity implements NamedScreenHandler
                 double y = pos.getY() + 0.5;
                 double z = pos.getZ() + 0.5;
                 if (state.getBlock() instanceof CoffinBlock) {
-                    player.world.breakBlock(pos, true);
+                    player.getWorld().breakBlock(pos, true);
                     ((ServerWorld) player.getWorld()).spawnParticles(ParticleTypes.POOF, x, y, z, 7, 0.0, 0.0, 0.0, 0.0);
                 }
             }

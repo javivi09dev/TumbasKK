@@ -2,7 +2,8 @@ package powercyphe.coffins.sound;
 
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.Registries;
 import powercyphe.coffins.Mod;
 
 public class ModSounds {
@@ -12,7 +13,7 @@ public class ModSounds {
 
     private static SoundEvent registerSoundevent(String path) {
         Identifier id = new Identifier(Mod.MOD_ID, path);
-        return Registry.register(Registry.SOUND_EVENT, id, new SoundEvent(id));
+        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(id));
     }
     public static void registerModSounds() {
         Mod.debugMessage("Registering Sounds");

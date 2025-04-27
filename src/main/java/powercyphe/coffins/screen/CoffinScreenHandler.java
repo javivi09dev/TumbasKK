@@ -42,14 +42,12 @@ public class CoffinScreenHandler extends ScreenHandler {
         }
     }
 
-    @Override
     public void close(PlayerEntity player) {
         if (!player.getWorld().isClient) {
             inventory.onClose(player);
         }
     }
 
-    @Override
     public ItemStack transferSlot(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
@@ -74,6 +72,32 @@ public class CoffinScreenHandler extends ScreenHandler {
         return newStack;
     }
 
+    @Override
+    public ItemStack quickMove(PlayerEntity player, int slot) {
+        ItemStack itemStack = ItemStack.EMPTY;
+        Slot selectedSlot = this.slots.get(slot);
+        
+        if (selectedSlot != null && selectedSlot.hasStack()) {
+            ItemStack itemStack2 = selectedSlot.getStack();
+            itemStack = itemStack2.copy();
+            
+            if (slot < this.inventory.size()) {
+                if (!this.insertItem(itemStack2, this.inventory.size(), this.slots.size(), true)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (!this.insertItem(itemStack2, 0, this.inventory.size(), false)) {
+                return ItemStack.EMPTY;
+            }
+            
+            if (itemStack2.isEmpty()) {
+                selectedSlot.setStack(ItemStack.EMPTY);
+            } else {
+                selectedSlot.markDirty();
+            }
+        }
+        
+        return itemStack;
+    }
 
     @Override
     public boolean canUse(PlayerEntity player) {

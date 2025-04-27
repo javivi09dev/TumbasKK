@@ -52,10 +52,14 @@ public abstract class PlayerEntityMixin implements IEntityDataSaver {
     @Inject(method = "dropInventory", at = @At("HEAD"))
     private void dropInventory(CallbackInfo ci) {
         PlayerEntity player = ((PlayerEntity) (Object) this);
+        Mod.LOGGER.info("Método dropInventory invocado para el jugador: " + player.getName().getString());
         if (player.getWorld().isClient) return;
         RecoveryCompassData.setNbt((IEntityDataSaver) player, null);
         RecoveryCompassData.setCount((IEntityDataSaver) player, 0);
-        if (player.getWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) return;
+        if (player.getWorld().getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
+            Mod.LOGGER.info("KeepInventory está activado, no se generará ataúd");
+            return;
+        }
         this.vanishCursedItems();
 
         ArrayList<ItemStack> inventory = new ArrayList<>();
@@ -94,9 +98,11 @@ public abstract class PlayerEntityMixin implements IEntityDataSaver {
         }
         World world = player.getWorld();
         @Nullable BlockPos coffinPos = CoffinsUtil.findCoffinLocation(world, player.getBlockPos(), player.getRecentDamageSource());
+        Mod.LOGGER.info("Posición del ataúd encontrada: " + coffinPos);
 
         if (!items.isEmpty() && itemsAmount > 0) {
             if (world.getGameRules().getBoolean(Mod.DEATH_REQUIRES_COFFIN)) {
+                Mod.LOGGER.info("Se requiere ataúd para la muerte. Verificando si el jugador tiene uno.");
                 boolean hasCoffin = false;
                 int coffinSlot = 0;
                 for (int i = 0; i < items.size(); i++) {
@@ -107,14 +113,17 @@ public abstract class PlayerEntityMixin implements IEntityDataSaver {
                     }
                 }
                 if (hasCoffin) {
+                    Mod.LOGGER.info("El jugador tiene un ataúd. Usando el ataúd del jugador.");
                     ItemStack coffinStack = items.get(coffinSlot);
                     coffinStack.decrement(1);
                     items.set(coffinSlot, coffinStack);
                 } else {
+                    Mod.LOGGER.info("El jugador no tiene un ataúd. No se colocará un ataúd.");
                     coffinPos = null;
                 }
             }
             if (coffinPos != null) {
+                Mod.LOGGER.info("Colocando ataúd en: " + coffinPos);
                 BlockState blockState = ModBlocks.COFFIN.getDefaultState();
                 if (player.getWorld().getGameRules().getBoolean(Mod.SHOW_DEATH_COORDS)) player.sendMessage(Text.literal("Your Items were dropped at " + "§7[" + coffinPos.getX() + " " + coffinPos.getY() + " " + coffinPos.getZ() + "]"));
                 world.setBlockState(coffinPos, blockState);
@@ -124,6 +133,9 @@ public abstract class PlayerEntityMixin implements IEntityDataSaver {
                     coffinBlockEntity.setOwner(player.getUuid().toString(), player.getName().getString());
                     coffinBlockEntity.setFragile(true);
                     world.updateListeners(coffinPos, blockState, blockState, 3);
+                    Mod.LOGGER.info("Ataúd colocado y configurado correctamente.");
+                } else {
+                    Mod.LOGGER.info("¡ERROR! No se pudo obtener la entidad del ataúd.");
                 }
             } else {
                 if (world.getGameRules().getBoolean(Mod.SHOW_DEATH_COORDS)) player.sendMessage(Text.literal("Your Items were dropped at " + "§7[" + player.getBlockPos().getX() + " " + player.getBlockPos().getY() + " " + player.getBlockPos().getZ() + "]"));

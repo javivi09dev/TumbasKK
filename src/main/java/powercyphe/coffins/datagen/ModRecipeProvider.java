@@ -1,56 +1,53 @@
 package powercyphe.coffins.datagen;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.data.server.recipe.*;
+import net.minecraft.data.server.recipe.RecipeJsonProvider;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Items;
-import net.minecraft.tag.ItemTags;
+import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.util.Identifier;
 import powercyphe.coffins.block.ModBlocks;
 import powercyphe.coffins.item.ModItems;
 
 import java.util.function.Consumer;
 
 public class ModRecipeProvider extends FabricRecipeProvider {
-    public ModRecipeProvider(FabricDataGenerator dataGenerator) {
-        super(dataGenerator);
+    public ModRecipeProvider(FabricDataOutput output) {
+        super(output);
     }
 
-
     @Override
-    protected void generateRecipes(Consumer<RecipeJsonProvider> exporter) {
-        ShapedRecipeJsonBuilder.create(ModBlocks.COFFIN.asItem())
-                .pattern("010")
-                .pattern("232")
-                .pattern("010")
-                .input('0', Items.COBBLED_DEEPSLATE)
-                .input('1', ItemTags.PLANKS)
-                .input('2', Items.IRON_INGOT)
-                .input('3', ModItemTagProvider.BASE_CONTAINERS)
-                .criterion(FabricRecipeProvider.hasItem(Items.CHEST),
-                        FabricRecipeProvider.conditionsFromItem(Items.CHEST))
-                .offerTo(exporter);
+    public void generate(Consumer<RecipeJsonProvider> exporter) {
+        // Receta para el ataúd
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, ModBlocks.COFFIN.asItem())
+                .pattern("PPP")
+                .pattern("CBC")
+                .pattern("PPP")
+                .input('P', Items.MANGROVE_PLANKS)
+                .input('C', Items.CHEST)
+                .input('B', Items.BONE_BLOCK)
+                .criterion("has_bone_block", conditionsFromItem(Items.BONE_BLOCK))
+                .offerTo(exporter, new Identifier("coffins", "coffin"));
 
-        ShapedRecipeJsonBuilder.create(Items.ECHO_SHARD, 4)
-                .pattern("010")
-                .pattern("111")
-                .pattern("010")
-                .input('0', Items.AMETHYST_SHARD)
-                .input('1', Items.SCULK)
-                .criterion(FabricRecipeProvider.hasItem(Items.SCULK),
-                        FabricRecipeProvider.conditionsFromItem(Items.SCULK))
-                .offerTo(exporter);
-
-        ShapedRecipeJsonBuilder.create(ModItems.COFFIN_KEY, 1)
-                .pattern("  3")
-                .pattern("21 ")
-                .pattern("02 ")
-                .input('0', Items.FLINT)
-                .input('1', Items.BONE)
-                .input('2', Items.IRON_INGOT)
-                .input('3', Items.NETHERITE_SCRAP)
-                .criterion(FabricRecipeProvider.hasItem(Items.NETHERITE_SCRAP),
-                        FabricRecipeProvider.conditionsFromItem(Items.NETHERITE_SCRAP))
-                .offerTo(exporter);
-
+        // Receta para el fragmento de eco
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.ECHO_SHARD, 4)
+                .pattern("BBB")
+                .pattern("BSB")
+                .pattern("BBB")
+                .input('B', Items.BONE_MEAL)
+                .input('S', Items.SCULK)
+                .criterion("has_sculk", conditionsFromItem(Items.SCULK))
+                .offerTo(exporter, new Identifier("coffins", "echo_shard_from_sculk"));
+        
+        // Receta para la llave del ataúd
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, ModItems.COFFIN_KEY, 1)
+                .pattern(" E ")
+                .pattern(" I ")
+                .pattern(" I ")
+                .input('I', Items.IRON_INGOT)
+                .input('E', Items.ECHO_SHARD)
+                .criterion("has_echo_shard", conditionsFromItem(Items.ECHO_SHARD))
+                .offerTo(exporter, new Identifier("coffins", "coffin_key"));
     }
 }
